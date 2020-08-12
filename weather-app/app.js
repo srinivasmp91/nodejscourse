@@ -2,26 +2,27 @@ const request = require("request");
 const geocode = require("./utils/geocode");
 const forecast = require("./utils/forecast");
 
-// Goal: Create a reusable function for getting the forecast
-//
-// 1. Setup the "forecast" function in utils/forecast.js
-// 2. Require the function in app.js and call it as shown below
-// 3. The forecast function should have three potential calls to callback:
-//    - Low level error, pass string for error
-//    - Coordinate error, pass string for error
-//    - Success, pass forecast string for data (same format as from before)
+const address = process.argv[2];
+if (!address) {
+  console.log("Please enter city name");
+} else {
+    geocode(address, (error, {latitude, longitude, place}) => {
+      if (error) {
+        return console.log(error);
+      }
+      forecast(latitude, longitude, (error, {desc, temperature}) => {
+        if (error) {
+          return console.log(error);
+        }
 
-forecast("zcvs", "sxcv", (error, data) => {
-    console.log('Error', error)
-    console.log('Data', data)
-  })
+        console.log({
+          lat: latitude,
+          long: longitude,
+          city: place,
+          desc: desc,
+          temp: temperature
+        });
+      });
+  });
+}
 
-
-
-
-
-
-geocode("Boston", (error, data) => {
-    console.log("Error", error);
-    console.log("Data", data);
-})
